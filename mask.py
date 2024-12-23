@@ -1,5 +1,7 @@
 import sys
 import tensorflow as tf
+import os
+import datetime
 
 from PIL import Image, ImageDraw, ImageFont
 from transformers import AutoTokenizer, TFBertForMaskedLM
@@ -96,9 +98,7 @@ def visualize_attentions(tokens, attentions):
         for index_attention_head, attention_head in enumerate(
             attentions[index_attention_layer][0]
         ):
-            print(
-                f"Processing Head {index_attention_head} of type {type(attention_head)}"
-            )
+            # print(f"Processing Head {index_attention_head} of type {type(attention_head)}")
             generate_diagram(
                 index_attention_layer + 1,
                 index_attention_head + 1,
@@ -155,8 +155,12 @@ def generate_diagram(layer_number, head_number, tokens, attention_weights):
             color = get_color_for_attention_score(attention_weights[i][j])
             draw.rectangle((x, y, x + GRID_SIZE, y + GRID_SIZE), fill=color)
 
+    # Create image directory
+    img_dir = "imgs/" + datetime.datetime.now().strftime("%Y%m%d-%H%M")
+    # Create the directory if it doesn't exist
+    os.makedirs(img_dir, exist_ok=True)
     # Save image
-    img.save(f"Attention_Layer{layer_number}_Head{head_number}.png")
+    img.save(f"{img_dir}/Attention_Layer{layer_number}_Head{head_number}.png")
 
 
 if __name__ == "__main__":
